@@ -1,6 +1,7 @@
--e git+git@github.com:NYCPlanning/cook.git@b05325e309d2cadb346ddeeb8377b1fe6a463f6b#egg=cook
 dash==1.6.1
 dash-core-components==1.5.1
 dash-html-components==1.0.2
 dash-renderer==1.2.1
 dash-table==4.5.1
+gunicorn
+python-dotenv

@@ -7,7 +7,6 @@ from sqlalchemy import create_engine
 from pathlib import Path
 import pandas as pd
 import zipfile
-import geopandas as gpd
 import numpy as np
 import json
 import os
@@ -287,4 +286,4 @@ def submit_update(n_clicks, contents, filename, last_modified,
                     ])
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8005)
+    app.run_server(debug=False, host='0.0.0.0', port=os.environ.get('PORT', 5000))
