@@ -1,4 +1,5 @@
 import dash
+import dash_auth
 import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
@@ -11,6 +12,7 @@ import numpy as np
 import json
 import os
 from archiver import archiver
+from auth_users import VALID_USERNAME_PASSWORD_PAIRS
 import base64
 import datetime
 import io
@@ -26,6 +28,9 @@ schema_options = [dict(label=i, value=i) for i in schemas]
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+auth = dash_auth.BasicAuth(app, VALID_USERNAME_PASSWORD_PAIRS)
+
+server = app.server
 app.config.suppress_callback_exceptions = True
 
 app.layout = html.Div([
@@ -160,7 +165,7 @@ def display_updates(schema):
                             {'label': 'Yes', 'value': 'Y'},
                             {'label': 'No', 'value': 'N'}
                         ],
-                        value='Y',
+                        value='N',
                         labelStyle={'display': 'inline-block'}, 
                         id='UploadNew'
                     )
@@ -286,4 +291,4 @@ def submit_update(n_clicks, contents, filename, last_modified,
                     ])
 
 if __name__ == '__main__':
-    app.run_server(debug=False, host='0.0.0.0', port=os.environ.get('PORT', 5000))
+    app.run_server(debug=False, host='0.0.0.0', port=5000)

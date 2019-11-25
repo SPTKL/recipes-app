@@ -1,3 +1,3 @@
 #!/bin/bash
-gunicorn app:app --bind=:$PORT --workers=5 --threads=3
+gunicorn app:server --bind=:5000 --workers=3 --threads=3
 # python3 app.py

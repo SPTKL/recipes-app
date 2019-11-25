@@ -5,3 +5,5 @@ dash-renderer==1.2.1
 dash-table==4.5.1
 gunicorn
 python-dotenv
+dash_auth
+requests
