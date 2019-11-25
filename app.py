@@ -6,6 +6,8 @@ from ast import literal_eval
 from sqlalchemy import create_engine
 from pathlib import Path
 import pandas as pd
+import zipfile
+import geopandas as gpd
 import numpy as np
 import json
 import os
@@ -28,7 +30,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.config.suppress_callback_exceptions = True
 
 app.layout = html.Div([
-    html.H4('EDM data recipes yay!'),
+    html.H4('EDM Data Recipes  🍣 🍥 🍙 🍘 🍚 🍜 🍲 🍢 🍡 🥚 🍞 🍩'),
     html.Div([
             dcc.RadioItems(
                 options=[
@@ -43,6 +45,8 @@ app.layout = html.Div([
             html.Div(id='SchemaName'),
 
             html.Div(id='UpdateArea'),
+
+            html.Div(id='UploadStatusArea'), 
 
             html.Hr(),
 
@@ -196,10 +200,21 @@ def path_or_upload(value):
 
     return upload_style, path_style
 
+@app.callback(Output('UploadStatusArea', 'children'),
+              [Input('UploadArea', 'contents')],
+              [State('UploadArea', 'filename'),
+               State('UploadArea', 'last_modified')])
+def display_upload_status(contents, filename, last_modified):
+    return html.Div([
+        html.H5('Upload Complete 🙌🙌🙌'),
+        html.H6(f'File Name: {filename}'),
+        html.H6(f'Last Modified Date : {datetime.datetime.fromtimestamp(last_modified).strftime("%Y/%m/%d")}')
+    ])
+
 @app.callback(Output('UpdateMessageArea', 'children'),
-            [Input('UpdateButton', 'n_clicks'), 
-            Input('UploadArea', 'contents')],
-            [State('UploadArea', 'filename'),
+            [Input('UpdateButton', 'n_clicks')],
+            [State('UploadArea', 'contents'),
+            State('UploadArea', 'filename'),
             State('UploadArea', 'last_modified'),
             State('UploadNew', 'value'),
             State('schema', 'value'),
@@ -221,13 +236,19 @@ def submit_update(n_clicks, contents, filename, last_modified,
         suffix = Path(filename).suffix
         content_type, content_string = contents.split(',')
         decoded = base64.b64decode(content_string)
+        last_modified = datetime.datetime.fromtimestamp(last_modified).strftime("%Y/%m/%d")
+        schema = last_modified if schema.strip() == '' else schema.strip()
         temp_file = tempfile.NamedTemporaryFile(mode="w+", suffix=suffix, delete=False)
         filename = temp_file.name
 
         if suffix == '.csv':
             pd.read_csv(io.StringIO(decoded.decode('utf-8'))).to_csv(filename, index=False)
-        elif 'xls' in filename:
+        elif suffix == '.xls':
             pd.read_excel(io.BytesIO(decoded)).to_csv(filename, index=False)
+        elif suffix == '.zip':
+            contents = io.BytesIO(decoded)
+            with open(filename, "wb") as f:
+                f.write(contents.getvalue())
 
         if n_clicks and n_clicks>=1:
             try: 
