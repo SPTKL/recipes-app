@@ -14,9 +14,6 @@ from archiver import archiver
 # all the datapreparation part will take place here
 recipe_url = 'recipes.csv'
 df = pd.read_csv(recipe_url)
-# df.loc[:,'layerCreationOptions'] = df.loc[:,'layerCreationOptions'].apply(lambda x: x if pd.isna(x) else literal_eval(x))
-# df.loc[:,'srcOpenOptions'] = df.loc[:,'srcOpenOptions'].apply(lambda x: x if pd.isna(x) else literal_eval(x))
-# df.loc[:,'newFieldNames'] = df.loc[:,'newFieldNames'].apply(lambda x: x if pd.isna(x) else literal_eval(x))
 df = df.replace(np.nan, '', regex=True)
 
 schemas = df['schema_name'].to_list()
@@ -43,12 +40,23 @@ app.layout = html.Div([
 
             html.Div(id='UpdateArea'),
 
-            html.Button('Submit', id='UpdateButton'),
+            html.Button('Submit', id='UpdateButton'), 
 
             html.Div(id='UpdateMessageArea')
+
         ])
     ])
 
+@app.callback(
+    dash.dependencies.Output('output-container-button', 'children'),
+    [dash.dependencies.Input('button', 'n_clicks')],
+    [dash.dependencies.State('input-box', 'value')])
+def update_output(n_clicks, value):
+    return 'The input value was "{}" and the button has been clicked {} times'.format(
+        value,
+        n_clicks
+    )
+    
 @app.callback(Output('SchemaName', 'children'),
               [Input('SchemaNameRadio', 'value')])
 def display_schema(value): 
@@ -190,11 +198,12 @@ def path_or_upload(value):
             State('path', 'value'), 
             State('dstSRS', 'value'), 
             State('srcSRS', 'value'),
-            State('geometryType', 'value'), 
+            State('geometryType', 'value'),
+            State('metaInfo', 'value'),
             State('layerCreationOptions', 'value'),
             State('srcOpenOptions', 'value'),
             State('newFieldNames', 'value')])
-def submit_update(n_clicks, schema, version_name, 
+def submit_update(n_clicks, upload, schema, version_name, 
                 path, dstSRS, srcSRS, geometryType, 
                 metaInfo, layerCreationOptions, 
                 srcOpenOptions, newFieldNames):
@@ -206,10 +215,7 @@ def submit_update(n_clicks, schema, version_name,
                     'path': path, 
                     'geometryType': geometryType,
                     'srcSRS': srcSRS,
-                    'dstSRS': dstSRS,
-                    'layerCreationOptions':layerCreationOptions,
-                    'srcOpenOptions': srcOpenOptions,
-                    'newFieldNames': newFieldNames,
+                    'dstSRS': dstSRS
                     })
             return html.H4(f'{schema} has been updated!')
         except Exception as e:
