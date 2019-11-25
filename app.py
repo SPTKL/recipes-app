@@ -10,6 +10,10 @@ import numpy as np
 import json
 import os
 from archiver import archiver
+import base64
+import datetime
+import io
+import tempfile
 
 # all the datapreparation part will take place here
 recipe_url = 'recipes.csv'
@@ -39,6 +43,8 @@ app.layout = html.Div([
             html.Div(id='SchemaName'),
 
             html.Div(id='UpdateArea'),
+
+            html.Hr(),
 
             html.Button('Submit', id='UpdateButton'), 
 
@@ -151,7 +157,7 @@ def display_updates(schema):
                             {'label': 'Yes', 'value': 'Y'},
                             {'label': 'No', 'value': 'N'}
                         ],
-                        value='N',
+                        value='Y',
                         labelStyle={'display': 'inline-block'}, 
                         id='UploadNew'
                     )
@@ -191,8 +197,11 @@ def path_or_upload(value):
     return upload_style, path_style
 
 @app.callback(Output('UpdateMessageArea', 'children'),
-            [Input('UpdateButton', 'n_clicks')],
-            [State('UploadNew', 'value'),
+            [Input('UpdateButton', 'n_clicks'), 
+            Input('UploadArea', 'contents')],
+            [State('UploadArea', 'filename'),
+            State('UploadArea', 'last_modified'),
+            State('UploadNew', 'value'),
             State('schema', 'value'),
             State('version_name', 'value'), 
             State('path', 'value'), 
@@ -203,26 +212,58 @@ def path_or_upload(value):
             State('layerCreationOptions', 'value'),
             State('srcOpenOptions', 'value'),
             State('newFieldNames', 'value')])
-def submit_update(n_clicks, upload, schema, version_name, 
+def submit_update(n_clicks, contents, filename, last_modified,
+                upload, schema, version_name, 
                 path, dstSRS, srcSRS, geometryType, 
                 metaInfo, layerCreationOptions, 
                 srcOpenOptions, newFieldNames):
-    if n_clicks and n_clicks>=1:
-        try: 
-            archiver.archive_table(
-                config={'schema_name': schema,
-                    'version_name': '' if version_name==None else version_name,
-                    'path': path, 
-                    'geometryType': geometryType,
-                    'srcSRS': srcSRS,
-                    'dstSRS': dstSRS
-                    })
-            return html.H6(f'{schema} has been updated!')
-        except Exception as e:
-            return html.Div([
-                html.H6(f'something went wrong {schema} has been updated!'), 
-                html.H6(f'{str(e)}')
-                ])
+    if upload == 'Y':
+        suffix = Path(filename).suffix
+        content_type, content_string = contents.split(',')
+        decoded = base64.b64decode(content_string)
+        temp_file = tempfile.NamedTemporaryFile(mode="w+", suffix=suffix, delete=False)
+        filename = temp_file.name
+
+        if suffix == '.csv':
+            pd.read_csv(io.StringIO(decoded.decode('utf-8'))).to_csv(filename, index=False)
+        elif 'xls' in filename:
+            pd.read_excel(io.BytesIO(decoded)).to_csv(filename, index=False)
+
+        if n_clicks and n_clicks>=1:
+            try: 
+                archiver.archive_table(
+                    config={'schema_name': schema,
+                        'version_name': '' if version_name==None else version_name,
+                        'path': filename, 
+                        'geometryType': geometryType,
+                        'srcSRS': srcSRS,
+                        'dstSRS': dstSRS
+                        })
+                temp_file.close()
+                return html.H6(f'{schema} has been updated!')
+            except Exception as e:
+                temp_file.close()
+                return html.Div([
+                    html.H6(f'something went wrong {schema} has been updated!'), 
+                    html.H6(f'{str(e)}')
+                    ])
+    else: 
+        if n_clicks and n_clicks>=1:
+            try: 
+                archiver.archive_table(
+                    config={'schema_name': schema,
+                        'version_name': '' if version_name==None else version_name,
+                        'path': path, 
+                        'geometryType': geometryType,
+                        'srcSRS': srcSRS,
+                        'dstSRS': dstSRS
+                        })
+                return html.H6(f'{schema} has been updated!')
+            except Exception as e:
+                return html.Div([
+                    html.H6(f'something went wrong {schema} has been updated!'), 
+                    html.H6(f'{str(e)}')
+                    ])
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8004)
+    app.run_server(debug=True, port=8005)
