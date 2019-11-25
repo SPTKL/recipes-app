@@ -24,7 +24,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.config.suppress_callback_exceptions = True
 
 app.layout = html.Div([
-    html.H1('EDM data recipes yay!'),
+    html.H4('EDM data recipes yay!'),
     html.Div([
             dcc.RadioItems(
                 options=[
@@ -62,7 +62,7 @@ def update_output(n_clicks, value):
 def display_schema(value): 
     if value == 'N': 
         return html.Div([
-            html.H4('Schema Name'),
+            html.H6('Schema Name'),
             dcc.Dropdown(
                 id='schema',
                 options=schema_options,
@@ -71,7 +71,7 @@ def display_schema(value):
         ])
     else: 
         return html.Div([
-            html.H4('Schema Name'),
+            html.H6('Schema Name'),
             dcc.Input(
                     id='schema',
                     placeholder='enter new schema name here',
@@ -88,63 +88,63 @@ def display_updates(schema):
     except: 
         record = {}
     return html.Div([
-                html.H4('Version Name'),
+                html.H6('Version Name'),
                 dcc.Input(
                     id='version_name',
                     value=record.get('version_name', ''),
                     type='text',
                     style={'width': '100%'}
                 ),
-                html.H4('dstSRS'),
+                html.H6('dstSRS'),
                 dcc.Input(
                     id='dstSRS',
                     value=record.get('dstSRS', ''),
                     type='text',
                     style={'width': '100%'}
                 ), 
-                html.H4('srcSRS'),
+                html.H6('srcSRS'),
                 dcc.Input(
                     id='srcSRS',
                     value=record.get('srcSRS', ''),
                     type='text',
                     style={'width': '100%'}
                 ),
-                html.H4('Geometry Type'),
+                html.H6('Geometry Type'),
                 dcc.Input(
                     id='geometryType',
                     value=record.get('geometryType', ''),
                     type='text',
                     style={'width': '100%'}
                 ),
-                html.H4('Layer Creation Options'),
+                html.H6('Layer Creation Options'),
                 dcc.Input(
                     id='layerCreationOptions',
                     value=record.get('layerCreationOptions', ''),
                     type='text',
                     style={'width': '100%'}
                 ),
-                html.H4('Src Open Options'),
+                html.H6('Src Open Options'),
                 dcc.Input(
                     id='srcOpenOptions',
                     value=record.get('srcOpenOptions', ''),
                     type='text',
                     style={'width': '100%'}
                 ),
-                html.H4('New Field Names'),
+                html.H6('New Field Names'),
                 dcc.Input(
                     id='newFieldNames',
                     value=record.get('newFieldNames', ''),
                     type='text',
                     style={'width': '100%'}
                 ),
-                html.H4('metaInfo'),
+                html.H6('metaInfo'),
                 dcc.Input(
                     id='metaInfo',
                     value=record.get('metaInfo', ''),
                     type='text',
                     style={'width': '100%'}
                 ),
-                html.H5('Uploading New Data?'),
+                html.H6('Uploading New Data?'),
                 html.Div([
                     dcc.RadioItems(
                         options=[
@@ -157,7 +157,7 @@ def display_updates(schema):
                     )
                 ]),
                 html.Div([
-                    html.H4('path'),
+                    html.H6('path'),
                     dcc.Input(
                         id='path',
                         value=record.get('path', ''),
@@ -217,12 +217,12 @@ def submit_update(n_clicks, upload, schema, version_name,
                     'srcSRS': srcSRS,
                     'dstSRS': dstSRS
                     })
-            return html.H4(f'{schema} has been updated!')
+            return html.H6(f'{schema} has been updated!')
         except Exception as e:
             return html.Div([
-                html.H4(f'something went wrong {schema} has been updated!'), 
-                html.H5(f'{str(e)}')
+                html.H6(f'something went wrong {schema} has been updated!'), 
+                html.H6(f'{str(e)}')
                 ])
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8003)
+    app.run_server(debug=True, port=8004)
