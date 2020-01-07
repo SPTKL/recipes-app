@@ -3,6 +3,8 @@ dash-core-components==1.5.1
 dash-html-components==1.0.2
 dash-renderer==1.2.1
 dash-table==4.5.1
+sqlalchemy
+psycopg2-binary
 gunicorn
 python-dotenv
 dash_auth
