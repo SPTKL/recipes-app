@@ -16,6 +16,7 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/recipes-app:$(date +%s)
     - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
       with:
         name: ${{ secrets.DOCKER_USERNAME }}/recipes-app:$(date +%s)
         username: ${{ secrets.DOCKER_USERNAME }}
