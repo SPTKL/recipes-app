@@ -14,10 +14,11 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/recipes-app:$(date +%s)
+      run: |
+        docker build . --file Dockerfile --tag sptkl/recipes-app:$GITHUB_SHA
+        docker tag sptkl/recipes-app:$GITHUB_SHA sptkl/recipes-app:latest 
     - name: Publish to Registry
-      uses: elgohr/Publish-Docker-Github-Action@master
-      with:
-        name: ${{ secrets.DOCKER_USERNAME }}/recipes-app:$(date +%s)
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      run: |
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        docker push sptkl/recipes-app:$GITHUB_SHA
+        docker push sptkl/recipes-app:latest
