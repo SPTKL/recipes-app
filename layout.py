@@ -47,7 +47,7 @@ There are many variations of passages of Lorem Ipsum available, but the majority
 Content = html.Div([
     html.Div(className='four columns'),
     html.Div([Forms], className='four columns'), 
-    html.Div([Instructions], className='four columns'), 
+    # html.Div([Instructions], className='four columns'), 
 ], className='row')
 
 layout = html.Div([

@@ -14,7 +14,7 @@ import io
 import tempfile
 from layout import layout
 
-base_url=os.environ['BSAE_URL']
+base_url=os.environ['BASE_URL']
 external_stylesheets = ['https://codepen.io/sptkl/pen/gObvrKQ.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.config.suppress_callback_exceptions = True
@@ -227,7 +227,7 @@ def submit_update(n_clicks, contents, filename,
         version_name = '' if version_name.strip() == '' else version_name.strip()
 
         x = requests.post(f'{base_url}/upload',
-            files = {'file': decoded}, 
+            files = {'file': decoded},
             data = {'key': f'{last_modified}/{filename}', 'acl': acl})
         print(x)
         print(x.content)
