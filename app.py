@@ -13,10 +13,12 @@ import datetime
 import io
 import tempfile
 from layout import layout
+import flask
 
+server = flask.Flask(__name__)
 base_url=os.environ['BASE_URL']
 external_stylesheets = ['https://codepen.io/sptkl/pen/gObvrKQ.css']
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = dash.Dash(__name__, server=server, external_stylesheets=external_stylesheets)
 app.config.suppress_callback_exceptions = True
 app.layout = layout
 
