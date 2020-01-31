@@ -1,4 +1,5 @@
 from dash.dependencies import Input, Output, State
+from utils.style import style
 import dash_html_components as html
 import dash_core_components as dcc
 from ast import literal_eval
@@ -12,14 +13,28 @@ import base64
 import datetime
 import io
 import tempfile
-from layout import layout
+from utils.layout import layout
 import flask
 
 server = flask.Flask(__name__)
 base_url=os.environ['BASE_URL']
-external_stylesheets = ['https://codepen.io/sptkl/pen/gObvrKQ.css']
-app = dash.Dash(__name__, server=server, external_stylesheets=external_stylesheets)
+external_stylesheets = ['https://nyc-planning-style-guide.netlify.com/assets/css/nyc-planning.css']
+app = dash.Dash(__name__, 
+                server=server, 
+                meta_tags=[
+                    {'charset':'utf-8'},
+                    {'http-equiv': 'X-UA-Compatible','content': 'IE=edge'},
+                    {'name': 'viewport', 'content': 'width=device-width, initial-scale=1.0'}
+                ],
+                external_stylesheets=external_stylesheets)
 app.config.suppress_callback_exceptions = True
+app.title = 'EDM DATA RECIPES'
+app.head = [
+    html.Link(
+        href='https://use.fontawesome.com/releases/v5.8.2/css/all.css',
+        rel='stylesheet'
+    ),(style)
+]
 app.layout = layout
 
 @app.callback(Output('SchemaName', 'children'),
@@ -159,6 +174,7 @@ def display_updates(schema, SchemaNameRadio):
                 ], id='PathArea'), 
                 dcc.Upload(
                     id='UploadArea',
+                    className='button secondary',
                     children=html.Div([
                         'Drag and Drop or ',
                         html.A('Select Files')
@@ -169,15 +185,7 @@ def display_updates(schema, SchemaNameRadio):
             Output('PathArea', 'style')],
             [Input('UploadNew', 'value')])
 def path_or_upload(value): 
-    upload_style = {'width': '100%',
-                    'height': '100px',
-                    'lineHeight': '100px',
-                    'borderWidth': '1px',
-                    'borderStyle': 'dashed',
-                    'borderRadius': '5px',
-                    'textAlign': 'center',
-                    'display': 'none' if value=='N' else 'block'}
-
+    upload_style = {'display': 'none' if value=='N' else 'block'}
     path_style = {'display': 'none' if value=='Y' else 'block'}
 
     return upload_style, path_style
@@ -280,4 +288,4 @@ def submit_update(n_clicks, contents, filename,
                 ])
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8080)
+    app.run_server(debug=False, port=8080)
