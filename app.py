@@ -59,7 +59,7 @@ def display_schema(value):
                     value='',
                     placeholder='enter new schema name here',
                     type='text',
-                    style={'width': '100%'}
+                    
                 )
         ])
 
@@ -83,7 +83,14 @@ def display_updates(schema, SchemaNameRadio):
                     value=record.get('version_name', ''),
                     type='text',
                     placeholder='e.g. 20v1',
-                    style={'width': '100%'}
+                    
+                ),
+                html.H6('srcSRS'),
+                dcc.Input(
+                    id='srcSRS',
+                    value=record.get('srcSRS', ''),
+                    type='text',
+                    placeholder='e.g. EPSG:2263',
                 ),
                 html.H6('dstSRS'),
                 dcc.Input(
@@ -91,15 +98,6 @@ def display_updates(schema, SchemaNameRadio):
                     value=record.get('dstSRS', ''),
                     type='text',
                     placeholder='e.g. EPSG:4326',
-                    style={'width': '100%'}
-                ), 
-                html.H6('srcSRS'),
-                dcc.Input(
-                    id='srcSRS',
-                    value=record.get('srcSRS', ''),
-                    type='text',
-                    placeholder='e.g. EPSG:2263',
-                    style={'width': '100%'}
                 ),
                 html.H6('Geometry Type'),
                 dcc.Input(
@@ -107,7 +105,6 @@ def display_updates(schema, SchemaNameRadio):
                     value=record.get('geometryType', ''),
                     type='text',
                     placeholder='e.g. MULTIPOLYGON',
-                    style={'width': '100%'}
                 ),
                 html.H6('Layer Creation Options'),
                 dcc.Input(
@@ -115,7 +112,6 @@ def display_updates(schema, SchemaNameRadio):
                     value=str(record.get('layerCreationOptions', '')),
                     type='text',
                     placeholder='''e.g. ['OVERWRITE=YES', 'PRECISION=NO']''',
-                    style={'width': '100%'}
                 ),
                 html.H6('Src Open Options'),
                 dcc.Input(
@@ -123,7 +119,6 @@ def display_updates(schema, SchemaNameRadio):
                     value=str(record.get('srcOpenOptions', '')),
                     type='text',
                     placeholder='''e.g. ['AUTODETECT_TYPE=NO', 'EMPTY_STRING_AS_NULL=YES', 'GEOM_POSSIBLE_NAMES=the_geom']''',
-                    style={'width': '100%'}
                 ),
                 html.H6('New Field Names'),
                 dcc.Input(
@@ -131,7 +126,6 @@ def display_updates(schema, SchemaNameRadio):
                     value=str(record.get('newFieldNames', '')),
                     type='text',
                     placeholder='''e.g. ['BOROUGH', 'BLOCK', 'LOT', ...]''',
-                    style={'width': '100%'}
                 ),
                 html.H6('metaInfo'),
                 dcc.Input(
@@ -139,7 +133,6 @@ def display_updates(schema, SchemaNameRadio):
                     value=record.get('metaInfo', ''),
                     type='text',
                     placeholder='e.g. from NYC Opendata',
-                    style={'width': '100%'}
                 ),
                 html.H6('Uploading New Data?'),
                 html.Div([
@@ -169,7 +162,6 @@ def display_updates(schema, SchemaNameRadio):
                         value=record.get('path', ''),
                         type='text',
                         placeholder='e.g. https://raw.githubusercontent.com/file.csv',
-                        style={'width': '100%'}
                     )
                 ], id='PathArea'), 
                 dcc.Upload(
@@ -288,4 +280,4 @@ def submit_update(n_clicks, contents, filename,
                 ])
 
 if __name__ == '__main__':
-    app.run_server(debug=False, port=8080)
+    app.run_server(debug=True, port=8080)

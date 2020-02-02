@@ -1,3 +1,2 @@
 #!/bin/bash
-gunicorn app:server --bind=:5000 --workers=3 --threads=3
-# python3 app.py
+gunicorn app:server --bind=:5000 --workers=4 --threads=4 --timeout 6000
